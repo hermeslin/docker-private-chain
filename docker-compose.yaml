@@ -1,0 +1,78 @@
+version: "2"
+services:
+  #############################
+  # bootnode
+  #############################
+  bootnode:
+    # restart: always
+    image: hermeslin/private-chain:bootnode-1.0
+    build:
+      context: ./bootnode
+      dockerfile: Dockerfile
+    command: ["-nodekeyhex", "${BOOTNODE_KEY_HEX}"]
+    expose:
+      - ${BOOTNODE_PORT}
+    #ports:
+    #  - "8585:8545"
+    #   - "30303:30303"
+    networks:
+      back-tier:
+        ipv4_address: ${BOOTNODE_IP}
+  #############################
+  # geth
+  #############################
+  geth:
+    image: hermeslin/private-chain:geth-1.0
+    build:
+      context: ./geth
+      dockerfile: Dockerfile
+    environment:
+      - MACHINE_TYPE=geth
+    mem_limit: 1524m
+    # restart: always
+    depends_on:
+      - bootnode
+    expose:
+      - ${NODE_PORT}
+    volumes:
+      - ./genesis.json:/root/genesis.json:ro
+      - ${GETH_STORE_FOLDER}:/root/store
+    command: ["--networkid", "${CHIAN_ID}", "--bootnodes", "enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}"]
+    #ports:
+    #  - "8585:8545"
+    #   - "30303:30303"
+    networks:
+      back-tier:
+  #############################
+  # miner
+  #############################
+  miner:
+    image: hermeslin/private-chain:miner-1.0
+    build:
+      context: ./miner
+      dockerfile: Dockerfile
+    environment:
+      - MACHINE_TYPE=miner
+      - MINER_PWD=${MINER_PWD}
+    mem_limit: 1524m
+    # restart: always
+    depends_on:
+      - bootnode
+    expose:
+      - ${NODE_PORT}
+    volumes:
+      - ./genesis.json:/root/genesis.json:ro
+      - ${MINER_STORE_FOLDER}:/root/store
+    command: ["--networkid", "${CHIAN_ID}", "--bootnodes", "enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}", "--mine", "--minerthreads=1"]
+    #ports:
+    #  - "8585:8545"
+    #   - "30303:30303"
+    networks:
+      back-tier:
+networks:
+  back-tier:
+    driver: bridge
+    ipam:
+      config:
+      -
+        subnet: ${SUBNET}
