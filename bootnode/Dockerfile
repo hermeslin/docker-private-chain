@@ -5,7 +5,7 @@ FROM alpine:latest
 
 COPY --from=geth-builder /usr/local/bin/bootnode /usr/local/bin/bootnode
 
-# start geth
+# start bootnode
 COPY ./prepare/entrypoint.sh /root/entrypoint.sh
 RUN ["chmod", "+x", "/root/entrypoint.sh"]
 ENTRYPOINT ["sh", "/root/entrypoint.sh"]
