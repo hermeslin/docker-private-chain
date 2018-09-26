@@ -35,7 +35,7 @@ services:
     expose:
       - ${NODE_PORT}
     volumes:
-      - ./genesis.json:/root/genesis.json:ro
+      - ${GENESIS_FILE}:/root/genesis.json:ro
       - ${GETH_STORE_FOLDER}:/root/store
     command: ["--networkid", "${CHIAN_ID}", "--bootnodes", "enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}"]
     #ports:
@@ -61,7 +61,7 @@ services:
     expose:
       - ${NODE_PORT}
     volumes:
-      - ./genesis.json:/root/genesis.json:ro
+      - ${GENESIS_FILE}:/root/genesis.json:ro
       - ${MINER_STORE_FOLDER}:/root/store
     command: ["--networkid", "${CHIAN_ID}", "--bootnodes", "enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}", "--mine", "--minerthreads=1"]
     #ports:
