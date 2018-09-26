@@ -9,9 +9,10 @@ services:
     build:
       context: ./bootnode
       dockerfile: Dockerfile
-    command: ["-nodekeyhex", "${BOOTNODE_KEY_HEX}"]
     expose:
       - ${BOOTNODE_PORT}
+    volumes:
+      - ${BOOTNODE_STORE_FOLDER}:/root/store
     #ports:
     #  - "8585:8545"
     #   - "30303:30303"
