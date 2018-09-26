@@ -47,10 +47,13 @@ CHIAN_ID=42
 
 ### persistant data
 docker 的 container stop 後，原本存放的 `.ethereum` 及 `.ethash` 就會一起消失掉，所以可以在 `.env` 內指定
+
 1. BOOTNODE_STORE_FOLDER
 2. GETH_STORE_FOLDER
 3. MINER_STORE_FOLDER
+
 的位置
 
 ### miner 的 account info
-如果之前已經有產生好的 account，如果你是按照原本的 folder 產生的話，會存放在 `.ethereum/keystore/` 底下，這樣的話，可以指定 `MINER_STORE_FOLDER` 到你的 folder 位置，然後在 `.env` 下設定你的 account password ，換掉 `MINER_PWD` 的值就可以，在 miner 的 container 裡會自動 unlock account
+如果之前已經有產生好的 account，如果你是按照原本的 folder 產生的話，會存放在 `.ethereum/keystore/` 底下，這樣的話，可以指定 `MINER_STORE_FOLDER` 到你的 folder 位置。
+然後在 `.env` 下設定你的 account password ，換掉 `MINER_PWD` 的值就可以，之後在 miner 會自動 unlock account
