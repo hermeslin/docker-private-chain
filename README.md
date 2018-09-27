@@ -1,5 +1,7 @@
 # docker-private-chain
-快速建立一個 ethereum 的 private chain
+快速建立一個 ethereum 的 private chain 以及 monitor
+![example](https://github.com/hermeslin/docker-private-chain/blob/master/screen-shot.png)
+
 
 ## 如何使用
 最簡單的方式就是將 `.env.example` 重新命名為 `.env` 之後，直接在 folder 下執行
@@ -8,9 +10,17 @@
 docker-compose up -d
 ```
 
+然後從瀏覽器打開
+```
+http://localhost:3003
+```
+
+## security issue
+所有的 container 只有 monitor-view 對 localhost 開放 3003 port（可以從 `.env`）修改，其餘皆在子網路 `172.16.6.0/24` 下
+
 ## customize your private chain
 你可以修改
-1. network id
+1. network id 以及 genesis.json
 2. bootnode 的 private key 以及 public key
 3. 在本機上存放 miner `.ethereum` 以及 `.ethash` 位置
 4. miner 的 account info
@@ -46,13 +56,11 @@ CHIAN_ID=42
 2. 將 bootnode 的 public address 寫入 `.env` 的 `BOOTNODE_PUBKEY`
 
 ### persistant data
-docker 的 container stop 後，原本存放的 `.ethereum` 及 `.ethash` 就會一起消失掉，所以可以在 `.env` 內指定
+docker 的 container stop 後，原本存放的 `.ethereum` 及 `.ethash` 就會一起消失掉，所以可以在 `.env` 內指定位置
 
 1. BOOTNODE_STORE_FOLDER
 2. GETH_STORE_FOLDER
 3. MINER_STORE_FOLDER
-
-的位置
 
 ### miner 的 account info
 如果之前已經有產生好的 account，如果你是按照原本的 folder 產生的話，會存放在 `.ethereum/keystore/` 底下，這樣的話，可以指定 `MINER_STORE_FOLDER` 到你的 folder 位置。
