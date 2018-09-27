@@ -35,10 +35,11 @@ services:
       - bootnode
     expose:
       - ${NODE_PORT}
+      - 8400
     volumes:
       - ${GENESIS_FILE}:/root/genesis.json:ro
       - ${GETH_STORE_FOLDER}:/root/store
-    command: ["--networkid", "${CHIAN_ID}", "--bootnodes", "enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}"]
+    command: ["--networkid", "${CHIAN_ID}", "--bootnodes", "enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}", "--rpc", "--rpcvhosts", "geth", "--rpcaddr", "0.0.0.0", "--rpcport", "8400"]
     #ports:
     #  - "8585:8545"
     #   - "30303:30303"
@@ -61,13 +62,62 @@ services:
       - bootnode
     expose:
       - ${NODE_PORT}
+      - 8400
     volumes:
       - ${GENESIS_FILE}:/root/genesis.json:ro
       - ${MINER_STORE_FOLDER}:/root/store
-    command: ["--networkid", "${CHIAN_ID}", "--bootnodes", "enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}", "--mine", "--minerthreads=1"]
+    command: ["--networkid", "${CHIAN_ID}", "--bootnodes", "enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}", "--mine", "--minerthreads=1", "--rpc", "--rpcvhosts", "miner", "--rpcaddr", "0.0.0.0", "--rpcport", "8400"]
     #ports:
     #  - "8585:8545"
     #   - "30303:30303"
+    networks:
+      back-tier:
+  #############################
+  # monitor-view
+  #############################
+  monitor-view:
+    image: hermeslin/private-chain:monitor-view-1.0
+    build:
+      context: ./monitor-view
+      dockerfile: Dockerfile
+    environment:
+      - MONITOR_VIEW_SECRET=${MONITOR_VIEW_SECRET}
+    depends_on:
+      - bootnode
+    ports:
+      - "${MONITOR_VIEW_LOCAL_PORT}:3000"
+    expose:
+      - 3000
+    networks:
+      back-tier:
+  #############################
+  # monitor-api-miner
+  #############################
+  monitor-api-miner:
+    image: hermeslin/private-chain:monitor-api-1.0
+    build:
+      context: ./monitor-api
+      dockerfile: Dockerfile
+    environment:
+      - MONITOR_VIEW_SECRET=${MONITOR_VIEW_SECRET}
+      - MACHINE_TYPE=miner
+    depends_on:
+      - miner
+    networks:
+      back-tier:
+  #############################
+  # monitor-api-geth
+  #############################
+  monitor-api-geth:
+    image: hermeslin/private-chain:monitor-api-1.0
+    build:
+      context: ./monitor-api
+      dockerfile: Dockerfile
+    environment:
+      - MONITOR_VIEW_SECRET=${MONITOR_VIEW_SECRET}
+      - MACHINE_TYPE=geth
+    depends_on:
+      - geth
     networks:
       back-tier:
 networks:
