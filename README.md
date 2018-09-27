@@ -17,6 +17,7 @@ http://localhost:3003
 
 ## security issue
 所有的 container 只有 monitor-view 對 localhost 開放 3003 port（可以從 `.env`）修改，其餘皆在子網路 `172.16.6.0/24` 下
+意即 geth 的 rpc port 也只會讓 `172.16.6.0/24` 下的 container 連線
 
 ## customize your private chain
 你可以修改
