@@ -4,7 +4,7 @@ services:
   # bootnode
   #############################
   bootnode:
-    # restart: always
+    restart: always
     image: hermeslin/private-chain:bootnode-1.0
     build:
       context: ./bootnode
@@ -30,7 +30,7 @@ services:
     environment:
       - MACHINE_TYPE=geth
     mem_limit: 1524m
-    # restart: always
+    restart: always
     depends_on:
       - bootnode
     expose:
@@ -57,7 +57,7 @@ services:
       - MACHINE_TYPE=miner
       - MINER_PWD=${MINER_PWD}
     mem_limit: 1524m
-    # restart: always
+    restart: always
     depends_on:
       - bootnode
     expose:
@@ -80,6 +80,7 @@ services:
     build:
       context: ./monitor-view
       dockerfile: Dockerfile
+    restart: always
     environment:
       - MONITOR_VIEW_SECRET=${MONITOR_VIEW_SECRET}
     depends_on:
@@ -98,6 +99,7 @@ services:
     build:
       context: ./monitor-api
       dockerfile: Dockerfile
+    restart: always
     environment:
       - MONITOR_VIEW_SECRET=${MONITOR_VIEW_SECRET}
       - MACHINE_TYPE=miner
@@ -113,6 +115,7 @@ services:
     build:
       context: ./monitor-api
       dockerfile: Dockerfile
+    restart: always
     environment:
       - MONITOR_VIEW_SECRET=${MONITOR_VIEW_SECRET}
       - MACHINE_TYPE=geth
