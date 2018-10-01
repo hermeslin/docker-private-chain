@@ -1,6 +1,7 @@
 # docker-private-chain
 快速建立一個 ethereum 的 private chain 以及 monitor
-![example](https://github.com/hermeslin/docker-private-chain/blob/master/screen-shot.png)
+
+![example](https://github.com/hermeslin/docker-private-chain/blob/master/screen-shot.png?001)
 
 
 ## 如何使用
