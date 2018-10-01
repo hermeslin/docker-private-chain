@@ -1,4 +1,9 @@
 #!/bin/sh
+if [[ -z "$1" ]]; then
+   echo "input is empty"
+   exit 1
+fi
+
 if [ ! -f /root/store/$1.key ]; then
     echo "/root/store/$1.key not found, running 'bootnode -nodekey'..."
     bootnode -genkey /root/store/$1.key
