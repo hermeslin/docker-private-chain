@@ -1,8 +1,13 @@
 #!/bin/sh
-if [ ! -d /root/store/.ethereum/keystore ]; then
-    echo "/root/store/.ethereum/keystore not found, running 'geth init'..."
-    geth --datadir "/root/store/.ethereum" init root/genesis.json
+DATA_DIR="/root/store/.ethereum"
+if [ ! -d ${DATA_DIR}/keystore ]; then
+    echo "${DATA_DIR}/keystore not found, running 'geth init'..."
+    geth --datadir "${DATA_DIR}" init root/genesis.json
     echo "...done!"
 fi
 
-geth "$@" --ipcpath "/root/geth.ipc" --datadir "/root/store/.ethereum"
+## set static nodes
+cp /root/static-nodes.json ${DATA_DIR}
+
+## start geth
+geth "$@" -nodekey /root/node.key --ipcpath "/root/geth.ipc" --datadir "${DATA_DIR}"

@@ -2,28 +2,20 @@ version: "2"
 services:
   #############################
   # bootnode
+  # generate each nodes enode url
   #############################
   bootnode:
-    restart: always
-    image: hermeslin/private-chain:bootnode-1.0
+    image: hermeslin/private-chain:bootnode-1.1
     build:
       context: ./bootnode
       dockerfile: Dockerfile
-    expose:
-      - ${BOOTNODE_PORT}
     volumes:
       - ${BOOTNODE_STORE_FOLDER}:/root/store
-    #ports:
-    #  - "8585:8545"
-    #   - "30303:30303"
-    networks:
-      back-tier:
-        ipv4_address: ${BOOTNODE_IP}
   #############################
   # geth
   #############################
   geth:
-    image: hermeslin/private-chain:geth-1.0
+    image: hermeslin/private-chain:geth-1.1
     build:
       context: ./geth
       dockerfile: Dockerfile
@@ -31,25 +23,29 @@ services:
       - MACHINE_TYPE=geth
     mem_limit: 1524m
     restart: always
-    depends_on:
-      - bootnode
+    # depends_on:
+    #   - bootnode
     expose:
-      - ${NODE_PORT}
+      - ${GETH_NODE_PORT}
+      - ${GETH_NODE_PORT}/udp
       - 8400
     volumes:
+      - ${BOOTNODE_STORE_FOLDER}/${GETH_BOOTNODE_KEY}:/root/node.key:ro
+      - ${BOOTNODE_STORE_FOLDER}/static-nodes.json:/root/static-nodes.json:ro
       - ${GENESIS_FILE}:/root/genesis.json:ro
       - ${GETH_STORE_FOLDER}:/root/store
-    command: ["--networkid", "${CHIAN_ID}", "--bootnodes", "enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}", "--rpc", "--rpcvhosts", "geth", "--rpcaddr", "0.0.0.0", "--rpcport", "8400"]
+    command: ["--networkid", "${CHIAN_ID}", "--rpc", "--rpcvhosts", "geth", "--rpcaddr", "0.0.0.0", "--rpcport", "8400"]
     #ports:
     #  - "8585:8545"
     #   - "30303:30303"
     networks:
       back-tier:
+        ipv4_address: ${GETH_IP}
   #############################
   # miner
   #############################
   miner:
-    image: hermeslin/private-chain:miner-1.0
+    image: hermeslin/private-chain:miner-1.1
     build:
       context: ./miner
       dockerfile: Dockerfile
@@ -58,20 +54,24 @@ services:
       - MINER_PWD=${MINER_PWD}
     mem_limit: 1524m
     restart: always
-    depends_on:
-      - bootnode
+    # depends_on:
+    #   - bootnode
     expose:
-      - ${NODE_PORT}
+      - ${MINER_NODE_PORT}
+      - ${MINER_NODE_PORT}/udp
       - 8400
     volumes:
+      - ${BOOTNODE_STORE_FOLDER}/${MINER_BOOTNODE_KEY}:/root/node.key:ro
+      - ${BOOTNODE_STORE_FOLDER}/static-nodes.json:/root/static-nodes.json:ro
       - ${GENESIS_FILE}:/root/genesis.json:ro
       - ${MINER_STORE_FOLDER}:/root/store
-    command: ["--networkid", "${CHIAN_ID}", "--bootnodes", "enode://${BOOTNODE_PUBKEY}@${BOOTNODE_IP}:${BOOTNODE_PORT}", "--mine", "--minerthreads=1", "--rpc", "--rpcvhosts", "miner", "--rpcaddr", "0.0.0.0", "--rpcport", "8400"]
+    command: ["--networkid", "${CHIAN_ID}", "--mine", "--minerthreads=1", "--rpc", "--rpcvhosts", "miner", "--rpcaddr", "0.0.0.0", "--rpcport", "8400"]
     #ports:
     #  - "8585:8545"
     #   - "30303:30303"
     networks:
       back-tier:
+        ipv4_address: ${MINER_IP}
   #############################
   # monitor-view
   #############################
