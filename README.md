@@ -4,13 +4,48 @@
 
 
 ## 如何使用
-最簡單的方式就是將 `.env.example` 重新命名為 `.env` 之後，直接在 folder 下執行
 
-```sh
-docker-compose up -d
+### 產生 .env
+先將 `.env.example` 重新命名為 `.env` 之後，build bootnode container
+```
+docker-compose build bootnode
 ```
 
-然後從瀏覽器打開
+### 產生 static-nodes.json
+這是在 `.env` 下的設定
+```
+GETH_IP=172.16.6.3
+GETH_NODE_PORT=30303
+GETH_BOOTNODE_KEY=geth.key
+```
+
+按照上方的設定執行 bootnode container
+```shell
+docker-compose run bootnode geth 172.16.6.3 30303
+```
+
+會在 ./store/bootnode/ 底下產生 3 個檔案，一個是 `geth.key` 另一個是 `geth.address`，最後一個是 `static-nodes.json`。 `static-nodes.json` 會把當前資料夾底下的 `*.address` 做成 json 檔案
+
+所以再依照 `.env` 下的設定
+```
+MINER_IP=172.16.6.4
+MINER_NODE_PORT=30303
+MINER_BOOTNODE_KEY=miner.key
+```
+
+執行
+```shell
+docker-compose run bootnode miner 172.16.6.4 30303
+```
+
+最後在 `./store/bootnode/` 會有 5 個檔案， `static-nodes.json` 裡會有 geth 以及 miner 的 enode address。
+
+### 啟動 docker-compose
+```shell
+docker-compose up -d
+```
+### Monitor
+瀏覽器打開
 ```
 http://localhost:3003
 ```
