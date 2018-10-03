@@ -15,10 +15,12 @@ services:
   # geth
   #############################
   geth:
-    image: hermeslin/private-chain:geth-1.1
+    image: hermeslin/private-chain:geth-1.2
     build:
       context: ./geth
       dockerfile: Dockerfile
+      args:
+        timezone: ${TIME_ZONE}
     environment:
       - MACHINE_TYPE=geth
     mem_limit: 1524m
@@ -45,10 +47,12 @@ services:
   # miner
   #############################
   miner:
-    image: hermeslin/private-chain:miner-1.1
+    image: hermeslin/private-chain:miner-1.2
     build:
       context: ./miner
       dockerfile: Dockerfile
+      args:
+        timezone: ${TIME_ZONE}
     environment:
       - MACHINE_TYPE=miner
       - MINER_PWD=${MINER_PWD}
