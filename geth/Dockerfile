@@ -1,7 +1,7 @@
 FROM hermeslin/go-ethereum:v1.8.16 as geth-builder
 
 ## build final executable scenario
-FROM alpine:latest
+FROM alpine:3.8
 RUN apk add --no-cache ca-certificates
 COPY --from=geth-builder /usr/local/bin/geth /usr/local/bin/geth
 
