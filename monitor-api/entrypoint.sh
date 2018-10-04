@@ -1,5 +1,5 @@
 #!/bin/sh
-NODE_ENV=production \
+exec env NODE_ENV=production \
 RPC_HOST=$MACHINE_TYPE \
 RPC_PORT=8400 \
 WS_SERVER=http://monitor-view:3000 \

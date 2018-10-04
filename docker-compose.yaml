@@ -35,10 +35,10 @@ services:
         timezone: ${TIME_ZONE}
     environment:
       - MACHINE_TYPE=geth
+    stop_grace_period: 1m0s
+    stop_signal: SIGTERM
     mem_limit: 1524m
-    restart: always
-    # depends_on:
-    #   - bootnode
+    restart: unless-stopped
     expose:
       - ${GETH_NODE_PORT}
       - ${GETH_NODE_PORT}/udp
@@ -68,10 +68,10 @@ services:
     environment:
       - MACHINE_TYPE=miner
       - MINER_PWD=${MINER_PWD}
+    stop_grace_period: 1m0s
+    stop_signal: SIGTERM
     mem_limit: 1524m
-    restart: always
-    # depends_on:
-    #   - bootnode
+    restart: unless-stopped
     expose:
       - ${MINER_NODE_PORT}
       - ${MINER_NODE_PORT}/udp
@@ -96,7 +96,7 @@ services:
     build:
       context: ./monitor-view
       dockerfile: Dockerfile
-    restart: always
+    restart: unless-stopped
     environment:
       - MONITOR_VIEW_SECRET=${MONITOR_VIEW_SECRET}
     depends_on:
@@ -115,7 +115,7 @@ services:
     build:
       context: ./monitor-api
       dockerfile: Dockerfile
-    restart: always
+    restart: unless-stopped
     environment:
       - MONITOR_VIEW_SECRET=${MONITOR_VIEW_SECRET}
       - MACHINE_TYPE=miner
@@ -131,7 +131,7 @@ services:
     build:
       context: ./monitor-api
       dockerfile: Dockerfile
-    restart: always
+    restart: unless-stopped
     environment:
       - MONITOR_VIEW_SECRET=${MONITOR_VIEW_SECRET}
       - MACHINE_TYPE=geth

@@ -18,4 +18,4 @@ cp /root/static-nodes.json ${DATA_DIR}
 
 ## after create account
 ## unlock first account with index and password
-geth "$@" -nodekey /root/node.key --unlock 0 --password /root/MINER_PWD --ipcpath "/root/geth.ipc" --datadir "${DATA_DIR}" --ethash.dagdir "${DAG_DIR}"
+exec geth "$@" -nodekey /root/node.key --unlock 0 --password /root/MINER_PWD --ipcpath "/root/geth.ipc" --datadir "${DATA_DIR}" --ethash.dagdir "${DAG_DIR}"
