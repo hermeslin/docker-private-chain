@@ -3,6 +3,10 @@
 
 ![example](https://github.com/hermeslin/docker-private-chain/blob/master/screen-shot.png?001)
 
+## docker 環境
+1. alpine:3.8
+2. golang:1.10
+3. go-ethereum:v1.8.16
 
 ## 如何使用
 
