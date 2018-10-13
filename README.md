@@ -107,3 +107,66 @@ docker 的 container stop 後，原本存放的 `.ethereum` 及 `.ethash` 就會
 ### miner 的 account info
 如果之前已經有產生好的 account，如果你是按照原本的 folder 產生的話，會存放在 `.ethereum/keystore/` 底下，這樣的話，可以指定 `MINER_STORE_FOLDER` 到你的 folder 位置。
 然後在 `.env` 下設定你的 account password ，換掉 `MINER_PWD` 的值就可以，之後在 miner 會自動 unlock account
+
+## 開發環境
+這是使用 truffle 以及 ganache-cli 來做 locale 端的開發，先確定在 ganache-cli 上開發及 test 無誤後，未來在 [truffle.js](https://github.com/hermeslin/Splitter/blob/master/truffle.js) 內加上這個 private chain 的 network，就可以再 deploy 到 private chain 上
+
+### 版本
+1. Truffle v4.1.14 (core: 4.1.14)
+2. Solidity v0.4.24 (solc-js)
+3. Ganache CLI v6.1.7 (ganache-core: 2.2.1)
+
+### 使用方式
+啟動 ganache-cli
+```shell
+docker-compose up -d ganache-cli
+```
+
+查看 ganache-cli log，可以查看 smart contract deploy 後的狀況
+```shell
+docker-compose logs -f ganache-cli
+```
+
+### truffle
+進入 truffle，並 init 一個新的 project，可以在 `.env` 的 `TRUFFLE_STORE_FOLDER` 設定要 mount 進 `truffle` 的資料夾位置
+```shell
+> docker-compose run truffle /bin/ash
+/ #
+> cd /root/truffle && mkdir hello_world && cd hello_world
+~/truffle/hello_world #
+>truffle init
+Downloading...
+Unpacking...
+Setting up...
+Unbox successful. Sweet!
+
+Commands:
+
+  Compile:        truffle compile
+  Migrate:        truffle migrate
+  Test contracts: truffle test
+```
+
+修改 `/root/truffle/hello_world/truffle.js`，並指定 `development` 的位置，port 以及 network_id 會是 `.env` 內的 `GANACHE_CLI_PORT` 以及 `GANACHE_CLI_NETWORK_ID`
+```javascript
+module.exports = {
+  networks: {
+    development: {
+      host: "ganache-cli",
+      port: 6666,
+      network_id: "6666"
+    }
+  }
+};
+```
+
+### 測試 ganache-cli 的 RPC 是否可用
+可以在進入 truffle 後，用 curl 去測試，但是這個 image 內沒有裝 curl，可以先裝 curl
+```shell
+> apk add curl
+```
+
+用 curl 測試 ganache-cli 的 RPC
+``` shell
+curl -H "Content-Type: application/json" -X POST --data '{"id": "1", "jsonrpc":"2.0","method":"net_version","params":[]}' http://ganache-cli:6666
+```

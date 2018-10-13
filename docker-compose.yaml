@@ -24,6 +24,35 @@ services:
     volumes:
       - ${SOLIDITY_STORE_FOLDER}:/root/solidity
   #############################
+  # truffle
+  #############################
+  truffle:
+    image: hermeslin/private-chain:truffle-1.0
+    build:
+      context: ./truffle
+      dockerfile: Dockerfile
+      args:
+        timezone: ${TIME_ZONE}
+    volumes:
+      - ${TRUFFLE_STORE_FOLDER}:/root/truffle
+  #############################
+  # ganache-cli
+  #############################
+  ganache-cli:
+    image: hermeslin/private-chain:ganache-cli-1.0
+    build:
+      context: ./ganache-cli
+      dockerfile: Dockerfile
+      args:
+        timezone: ${TIME_ZONE}
+    stop_grace_period: 30s
+    stop_signal: SIGINT
+    expose:
+      - ${GANACHE_CLI_PORT}
+    volumes:
+      - ${TRUFFLE_STORE_FOLDER}:/root/truffle
+    command: ["--accounts", "${GANACHE_CLI_ACCOUNTS}", "--port", "${GANACHE_CLI_PORT}", "--networkId", "${GANACHE_CLI_NETWORK_ID}"]
+  #############################
   # geth
   #############################
   geth:
