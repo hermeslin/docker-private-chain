@@ -47,6 +47,8 @@ services:
         timezone: ${TIME_ZONE}
     stop_grace_period: 30s
     stop_signal: SIGINT
+    expose:
+      - ${GANACHE_CLI_PORT}
     volumes:
       - ${TRUFFLE_STORE_FOLDER}:/root/truffle
     command: ["--accounts", "${GANACHE_CLI_ACCOUNTS}", "--port", "${GANACHE_CLI_PORT}", "--networkId", "${GANACHE_CLI_NETWORK_ID}"]
